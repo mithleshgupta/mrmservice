@@ -29,5 +29,10 @@ docrouter.get(
     authMiddleware,
     docController.getDocumentById.bind(docController)
 );
+docrouter.get(
+    '/documents/type/:type_id',
+    authMiddleware,
+    docController.getDocumentsByTypeId.bind(docController)
+);
 
 module.exports = docrouter;

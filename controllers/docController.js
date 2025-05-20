@@ -72,6 +72,17 @@ class DocController {
             res.status(500).json({ message: error.message });
         }
     }
+
+    async getDocumentsByTypeId(req, res) {
+        try {
+            const user_id = req.user.id; 
+            const type_id = req.params.type_id;
+            const documents = await this.docService.getDocumentsByTypeId(type_id, user_id);
+            res.status(200).json(documents);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = DocController;

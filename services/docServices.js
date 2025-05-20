@@ -84,6 +84,17 @@ class DocService {
         return data;
     }
 
+    async getDocumentsByTypeId(type_id, user_id) {
+        const { data, error } = await supabase
+            .from('documents')
+            .select('*, document_media(*)')
+            .eq('type_id', type_id)
+            .eq('user_id', user_id);
+
+        if (error) throw new Error(error.message);
+        return data;
+    }
+
     async updateDocumentWithMedia({
         document_id,
         user_id,
