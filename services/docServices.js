@@ -4,7 +4,7 @@ class DocService {
     async getDocumentTypes() {
         const { data, error } = await supabase
             .from('document_types')
-            .select('id, name');    
+            .select('id, name');
         if (error) throw new Error(error.message);
         return data;
     }
@@ -78,7 +78,8 @@ class DocService {
         const { data, error } = await supabase
             .from('documents')
             .select('*, document_media(*)')
-            .eq('user_id', user_id);
+            .eq('user_id', user_id)
+            .eq('is_deleted', false);
 
         if (error) throw new Error(error.message);
         return data;
@@ -89,8 +90,8 @@ class DocService {
             .from('documents')
             .select('*, document_media(*)')
             .eq('type_id', type_id)
-            .eq('user_id', user_id);
-
+            .eq('user_id', user_id)
+            .eq('is_deleted', false);
         if (error) throw new Error(error.message);
         return data;
     }
@@ -172,12 +173,11 @@ class DocService {
     }
 
     async softDeleteDocument(document_id, user_id) {
-
+        // 1. Mark document as deleted
         const { error: docError } = await supabase
             .from('documents')
-            .update({ is_deleted: true })
+            .update({ is_deleted: true, updated_at: new Date().toISOString() })
             .eq('id', document_id)
-            .update({ updated_at: new Date().toISOString() })
             .eq('user_id', user_id);
 
         if (docError) throw new Error(docError.message);
@@ -216,6 +216,35 @@ class DocService {
             status: doc.is_deleted ? 'deleted' : 'updated',
             time: doc.updated_at
         }));
+    }
+
+    async getUserProfile(user_id) {
+        const { data, error } = await supabase
+            .from('users')
+            .select('first_name, last_name, dob, blood_group, username')
+            .eq('id', user_id)
+            .single();
+
+        if (error) throw new Error(error.message);
+
+
+        let age = null;
+        if (data.dob) {
+            const birthDate = new Date(data.dob);
+            const today = new Date();
+            age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+        }
+
+        return {
+            name: `${data.first_name} ${data.last_name}`,
+            age,
+            blood_group: data.blood_group,
+            username: data.username
+        };
     }
 }
 

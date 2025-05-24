@@ -44,5 +44,10 @@ docrouter.get(
     authMiddleware,
     docController.getLedger.bind(docController)
 );
+docrouter.get(
+    '/user/profile',
+    authMiddleware,
+    docController.getUserProfile.bind(docController)
+);
 
 module.exports = docrouter;

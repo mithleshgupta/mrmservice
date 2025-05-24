@@ -104,6 +104,19 @@ class DocController {
             res.status(500).json({ message: error.message });
         }
     }
+
+    async getUserProfile(req, res) {
+        try {
+            const user_id = req.user.id;
+            const profile = await this.docService.getUserProfile(user_id);
+            if (!profile) {
+                return res.status(404).json({ message: 'User not found.' });
+            }
+            res.status(200).json(profile);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = DocController;
