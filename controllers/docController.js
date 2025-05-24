@@ -75,10 +75,31 @@ class DocController {
 
     async getDocumentsByTypeId(req, res) {
         try {
-            const user_id = req.user.id; 
+            const user_id = req.user.id;
             const type_id = req.params.type_id;
             const documents = await this.docService.getDocumentsByTypeId(type_id, user_id);
             res.status(200).json(documents);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    async deleteDocument(req, res) {
+        try {
+            const document_id = req.params.id;
+            const user_id = req.user.id;
+            const result = await this.docService.softDeleteDocument(document_id, user_id);
+            res.status(200).json(result);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getLedger(req, res) {
+        try {
+            const user_id = req.user.id;
+            const ledger = await this.docService.getLedger(user_id);
+            res.status(200).json(ledger);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

@@ -117,7 +117,14 @@ class DocService {
 
         const { error: docError } = await supabase
             .from('documents')
-            .update({ type_id, name, date, keywords, notes })
+            .update({
+                type_id,
+                name,
+                date,
+                keywords,
+                notes,
+                updated_at: new Date().toISOString()
+            })
             .eq('id', document_id)
             .eq('user_id', user_id);
 
@@ -162,6 +169,53 @@ class DocService {
 
         if (error) throw new Error(error.message);
         return data;
+    }
+
+    async softDeleteDocument(document_id, user_id) {
+
+        const { error: docError } = await supabase
+            .from('documents')
+            .update({ is_deleted: true })
+            .eq('id', document_id)
+            .update({ updated_at: new Date().toISOString() })
+            .eq('user_id', user_id);
+
+        if (docError) throw new Error(docError.message);
+
+
+        const { data: mediaFiles, error: mediaError } = await supabase
+            .from('document_media')
+            .select('*')
+            .eq('document_id', document_id);
+
+        if (mediaError) throw new Error(mediaError.message);
+
+
+        for (const media of mediaFiles) {
+
+            const fileName = media.file_url.split('/').pop();
+            await supabase.storage.from('documents').remove([fileName]);
+        }
+
+        await supabase.from('document_media').delete().eq('document_id', document_id);
+
+        return { message: 'Document marked as deleted and associated media removed.' };
+    }
+
+    async getLedger(user_id) {
+        const { data, error } = await supabase
+            .from('documents')
+            .select('id, name, is_deleted, updated_at')
+            .eq('user_id', user_id);
+
+        if (error) throw new Error(error.message);
+
+        return data.map(doc => ({
+            id: doc.id,
+            name: doc.name,
+            status: doc.is_deleted ? 'deleted' : 'updated',
+            time: doc.updated_at
+        }));
     }
 }
 

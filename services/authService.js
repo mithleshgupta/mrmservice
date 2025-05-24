@@ -10,7 +10,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const JWT_SECRET = 'Mz/kaTPVSeIBcO8xSa31o7dUBtOeOx85bUNZIe/faEDBwHhU6scgW331h7DnUqUrYNOiyPFpzq6bPGslppw1UQ==';
 
 async function signupUser({ firstName, lastName, username, email, phone, dob, gender, bloodGroup }) {
-  // Check if user already exists
   const { data: existingUser, error: findError } = await supabase
     .from('users')
     .select('*')
@@ -21,7 +20,6 @@ async function signupUser({ firstName, lastName, username, email, phone, dob, ge
     if (existingUser.verified) {
       throw new Error('User with this email or username already exists and is verified.');
     } else {
-      // Update user details and send new OTP
       const { error: updateError } = await supabase
         .from('users')
         .update({
@@ -39,7 +37,6 @@ async function signupUser({ firstName, lastName, username, email, phone, dob, ge
       if (updateError) throw new Error(updateError.message);
     }
   } else {
-    // Insert new user
     const { error } = await supabase
       .from('users')
       .insert([
@@ -48,11 +45,9 @@ async function signupUser({ firstName, lastName, username, email, phone, dob, ge
     if (error) throw new Error(error.message);
   }
 
-  // Generate and send OTP
   const otp = Math.floor(100000 + Math.random() * 900000);
   await sendOtp(email, phone, otp);
 
-  // Upsert OTP in otps table
   await supabase
     .from('otps')
     .upsert([{ email, phone, otp }], { onConflict: ['email', 'phone'] });

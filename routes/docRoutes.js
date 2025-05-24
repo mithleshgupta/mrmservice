@@ -34,5 +34,15 @@ docrouter.get(
     authMiddleware,
     docController.getDocumentsByTypeId.bind(docController)
 );
+docrouter.delete(
+    '/documents/:id',
+    authMiddleware,
+    docController.deleteDocument.bind(docController)
+);
+docrouter.get(
+    '/ledger',
+    authMiddleware,
+    docController.getLedger.bind(docController)
+);
 
 module.exports = docrouter;
