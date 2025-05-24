@@ -4,7 +4,7 @@ class DocService {
     async getDocumentTypes() {
         const { data, error } = await supabase
             .from('document_types')
-            .select('id, name');
+            .select('id, name');    
         if (error) throw new Error(error.message);
         return data;
     }
