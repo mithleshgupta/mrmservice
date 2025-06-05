@@ -105,6 +105,7 @@ function verifyToken(token) {
   }
 }
 
+<<<<<<< HEAD
 async function updateUserDetails(userId, updates) {
   const { error } = await supabase
     .from('users')
@@ -116,11 +117,16 @@ async function updateUserDetails(userId, updates) {
   return { message: 'User details updated successfully.' };
 }
 
+=======
+>>>>>>> fdb319103dff409726f5fad30f292b5c1c0b77c4
 module.exports = {
   signupUser,
   verifyOtp,
   setPassword,
   loginUser,
   verifyToken,
+<<<<<<< HEAD
   updateUserDetails,
+=======
+>>>>>>> fdb319103dff409726f5fad30f292b5c1c0b77c4
 };
