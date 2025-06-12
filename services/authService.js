@@ -2,6 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { sendOtp } = require('../utils/otpGenerator');
+const crypto = require('crypto');
 
 const supabaseUrl = 'https://bgtclsztsuodczvwpbyw.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndGNsc3p0c3VvZGN6dndwYnl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3MzAyODgsImV4cCI6MjA1ODMwNjI4OH0.ZVk4wtFMAmHRFN0g6RIdzbCm48myqDvS8uFvWSFrb74';
@@ -92,8 +93,9 @@ async function loginUser({ username, password }) {
   if (!isPasswordValid) throw new Error('Invalid username or password.');
 
   const token = jwt.sign({ id: data.id, username: data.username }, JWT_SECRET, { expiresIn: '1h' });
+  const refreshToken = await generateAndStoreRefreshToken(data.id);
 
-  return { message: 'Login successful.', token, user: { id: data.id, username: data.username } };
+  return { message: 'Login successful.', token, refreshToken, user: { id: data.id, username: data.username } };
 }
 
 function verifyToken(token) {
@@ -116,6 +118,41 @@ async function updateUserDetails(userId, updates) {
   return { message: 'User details updated successfully.' };
 }
 
+async function generateAndStoreRefreshToken(userId) {
+  const refreshToken = crypto.randomBytes(64).toString('hex');
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+  const { error } = await supabase
+    .from('refresh_tokens')
+    .insert([{ user_id: userId, token: refreshToken, expires_at: expiresAt }]);
+
+  if (error) throw new Error('Could not store refresh token');
+  return refreshToken;
+}
+
+async function refreshAccessToken(refreshToken) {
+  const { data, error } = await supabase
+    .from('refresh_tokens')
+    .select('user_id, expires_at')
+    .eq('token', refreshToken)
+    .single();
+
+  if (error || !data) throw new Error('Invalid refresh token');
+  if (new Date(data.expires_at) < new Date()) throw new Error('Refresh token expired');
+
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('id, username')
+    .eq('id', data.user_id)
+    .single();
+
+  if (userError || !user) throw new Error('User not found');
+
+  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+
+  return { token };
+}
+
 module.exports = {
   signupUser,
   verifyOtp,
@@ -123,4 +160,6 @@ module.exports = {
   loginUser,
   verifyToken,
   updateUserDetails,
+  generateAndStoreRefreshToken,
+  refreshAccessToken,
 };

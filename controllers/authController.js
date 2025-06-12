@@ -38,11 +38,21 @@ async function login(req, res) {
 
 async function updateUserDetails(req, res) {
   try {
-    const userId = req.user.id; // set by authenticateToken middleware
+    const userId = req.user.id;
     const response = await authService.updateUserDetails(userId, req.body);
     res.status(200).json({ success: true, ...response });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
+  }
+}
+
+async function refreshToken(req, res) {
+  try {
+    const { refreshToken } = req.body;
+    const response = await authService.refreshAccessToken(refreshToken);
+    res.status(200).json({ success: true, ...response });
+  } catch (error) {
+    res.status(401).json({ success: false, message: error.message });
   }
 }
 
@@ -52,4 +62,5 @@ module.exports = {
   setPassword,
   login,
   updateUserDetails,
+  refreshToken,
 };
