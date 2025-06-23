@@ -120,7 +120,7 @@ async function updateUserDetails(userId, updates) {
 
 async function generateAndStoreRefreshToken(userId) {
   const refreshToken = crypto.randomBytes(64).toString('hex');
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); 
 
   const { error } = await supabase
     .from('refresh_tokens')

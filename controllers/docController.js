@@ -117,6 +117,18 @@ class DocController {
             res.status(500).json({ message: error.message });
         }
     }
+
+    async searchDocuments(req, res) {
+        try {
+            const { q } = req.query; 
+            if (!q) return res.status(400).json({ success: false, message: "Query is required" });
+
+            const results = await this.docService.searchDocumentsByName(q, req.user.id);
+            res.json({ success: true, documents: results });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
 }
 
 module.exports = DocController;
