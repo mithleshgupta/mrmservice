@@ -222,12 +222,7 @@ class DocService {
         console.log("I AM HERE BRO +++++++++")
         const { data, error } = await supabase
             .from('users')
-
-            .select('first_name, last_name, dob, blood_group, username, phone, gender')
-            .eq('id', user_id)
-
             .select('first_name, last_name, dob, blood_group, username, phone, gender').eq('id', user_id)
-
             .single();
 
         if (error) throw new Error(error.message);
@@ -249,19 +244,10 @@ class DocService {
             age,
             blood_group: data.blood_group,
             username: data.username,
-
-	    email: data.email,
-	    phone: data.phone,
-	    dob: data.dob,
-	    gender : data.gender,
-	    blood_group : data.blood_group,
-	    age
-
             email: data.email,
             phone: data.phone,
             dob: data.dob,
             gender: data.gender
-
         };
     }
 
@@ -279,4 +265,3 @@ class DocService {
 }
 
 module.exports = DocService;
-	
