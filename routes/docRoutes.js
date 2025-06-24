@@ -50,4 +50,10 @@ docrouter.get(
     docController.getUserProfile.bind(docController)
 );
 
+docrouter.get(
+    '/documents/search',
+    authMiddleware,
+    docController.searchDocuments.bind(docController)
+);
+
 module.exports = docrouter;
