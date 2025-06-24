@@ -221,7 +221,7 @@ class DocService {
     async getUserProfile(user_id) {
         const { data, error } = await supabase
             .from('users')
-            .select('first_name, last_name, dob, blood_group, username, phone, gender,')
+            .select('first_name, last_name, dob, blood_group, username, phone, gender')
             .eq('id', user_id)
             .single();
 
@@ -243,9 +243,16 @@ class DocService {
             name: `${data.first_name} ${data.last_name}`,
             age,
             blood_group: data.blood_group,
-            username: data.username
+            username: data.username,
+	    email: data.email,
+	    phone: data.phone,
+	    dob: data.dob,
+	    gender : data.gender,
+	    blood_group : data.blood_group,
+	    age
         };
     }
 }
 
 module.exports = DocService;
+	
