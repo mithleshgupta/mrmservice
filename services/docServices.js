@@ -256,7 +256,8 @@ class DocService {
             .from('documents')
             .select('id, name')
             .ilike('name', `%${query}%`)
-            .eq('user_id', userId);
+            .eq('user_id', userId)
+            .eq('is_deleted', false);
 
         if (error) throw new Error(error.message);
         return data;
