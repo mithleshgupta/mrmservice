@@ -38,7 +38,11 @@ async function login(req, res) {
 
 async function updateUserDetails(req, res) {
   try {
+
+    const userId = req.user.id; 
+
     const userId = req.user.id;
+
     const response = await authService.updateUserDetails(userId, req.body);
     res.status(200).json({ success: true, ...response });
   } catch (error) {
@@ -64,3 +68,4 @@ module.exports = {
   updateUserDetails,
   refreshToken,
 };
+
