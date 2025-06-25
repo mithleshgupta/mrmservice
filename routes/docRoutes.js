@@ -24,6 +24,13 @@ docrouter.put(
     upload.array('files'),
     docController.updateDocument.bind(docController)
 );
+
+docrouter.get(
+    '/documents/search',
+    authMiddleware,
+    docController.searchDocuments.bind(docController)
+);
+
 docrouter.get(
     '/documents/:id',
     authMiddleware,
@@ -50,10 +57,6 @@ docrouter.get(
     docController.getUserProfile.bind(docController)
 );
 
-docrouter.get(
-    '/documents/search',
-    authMiddleware,
-    docController.searchDocuments.bind(docController)
-);
+
 
 module.exports = docrouter;
