@@ -41,7 +41,7 @@ async function updateUserDetails(req, res) {
 
     const userId = req.user.id; 
 
-    const userId = req.user.id;
+    
 
     const response = await authService.updateUserDetails(userId, req.body);
     res.status(200).json({ success: true, ...response });
