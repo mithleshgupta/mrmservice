@@ -243,11 +243,19 @@ class DocService {
             name: `${data.first_name} ${data.last_name}`,
             age,
             blood_group: data.blood_group,
+<<<<<<< HEAD
+            username: data.username,
+	    email: data.email,
+	    phone: data.phone,
+	    dob: data.dob,
+	    gender : data.gender
+=======
             username: data.username, email: data.email,
             phone: data.phone,
             dob: data.dob,
             gender: data.gender,
 
+>>>>>>> 4881459abe1866c105671070aca3782292521dd0
 
         };
     }
@@ -258,7 +266,11 @@ class DocService {
             .select('id, name')
             .ilike('name', `%${query}%`)
             .eq('user_id', userId)
+<<<<<<< HEAD
+	    .eq('is_deleted',false);
+=======
             .eq('is_deleted', false);
+>>>>>>> 4881459abe1866c105671070aca3782292521dd0
 
         if (error) throw new Error(error.message);
         return data;
