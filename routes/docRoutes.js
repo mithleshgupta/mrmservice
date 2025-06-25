@@ -26,20 +26,11 @@ docrouter.put(
 );
 
 docrouter.get(
-<<<<<<< HEAD
-	'/documents/search',
-	authMiddleware,
-	docController.searchDocument.bind(docController)
-);
-
-
-=======
     '/documents/search',
     authMiddleware,
     docController.searchDocuments.bind(docController)
 );
 
->>>>>>> 4881459abe1866c105671070aca3782292521dd0
 docrouter.get(
     '/documents/:id',
     authMiddleware,
@@ -66,10 +57,6 @@ docrouter.get(
     docController.getUserProfile.bind(docController)
 );
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 4881459abe1866c105671070aca3782292521dd0
 
 
 module.exports = docrouter;
