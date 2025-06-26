@@ -31,7 +31,6 @@ docrouter.get(
     docController.searchDocuments.bind(docController)
 );
 
-
 docrouter.get(
     '/documents/:id',
     authMiddleware,
@@ -57,8 +56,6 @@ docrouter.get(
     authMiddleware,
     docController.getUserProfile.bind(docController)
 );
-
-
 
 
 module.exports = docrouter;

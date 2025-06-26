@@ -63,6 +63,7 @@ class DocController {
         try {
             const document_id = req.params.id;
             const user_id = req.user.id;
+            console.log("GET BY ID ROUTE HIT", req.params);
             const document = await this.docService.getDocumentById(document_id, user_id);
             if (!document) {
                 return res.status(404).json({ message: 'Document not found.' });
@@ -120,7 +121,8 @@ class DocController {
 
     async searchDocuments(req, res) {
         try {
-            const { q } = req.query; 
+            const { q } = req.query;
+            console.log("SEARCH ROUTE HIT", req.query);
             if (!q) return res.status(400).json({ success: false, message: "Query is required" });
 
             const results = await this.docService.searchDocumentsByName(q, req.user.id);
